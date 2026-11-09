@@ -1,0 +1,27 @@
+server:
+  port: 8050
+
+spring:
+  application:
+    name: pot-vocabulary-server
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # TODO 换成你自己的数据库地址、库名、账号密码
+    url: jdbc:mysql://127.0.0.1:3306/pot_vocabulary?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    username: root
+    password: Aa123456
+  jackson:
+    time-zone: Asia/Shanghai
+    default-property-inclusion: non_null
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: auto
+
+logging:
+  level:
+    com.zizaizhiwu.vocabulary: info
