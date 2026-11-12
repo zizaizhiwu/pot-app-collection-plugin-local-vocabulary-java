@@ -3,6 +3,7 @@ package com.zizaizhiwu.vocabulary.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TopicSummaryVO {
 
@@ -10,6 +11,8 @@ public class TopicSummaryVO {
     private String sourceText;
     private String sourceLang;
     private String targetLang;
+    /** 单词当前所属的全部收藏夹 */
+    private List<CollectionBriefVO> collections;
     private long resultCount;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -48,6 +51,14 @@ public class TopicSummaryVO {
 
     public void setTargetLang(String targetLang) {
         this.targetLang = targetLang;
+    }
+
+    public List<CollectionBriefVO> getCollections() {
+        return collections;
+    }
+
+    public void setCollections(List<CollectionBriefVO> collections) {
+        this.collections = collections;
     }
 
     public long getResultCount() {

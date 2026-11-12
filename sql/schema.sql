@@ -7,6 +7,33 @@ CREATE DATABASE IF NOT EXISTS `pot_vocabulary`
 
 USE `pot_vocabulary`;
 
+-- 收藏夹表：新收藏的单词默认进入「默认收藏集」
+CREATE TABLE IF NOT EXISTS `vocabulary_collection`
+(
+    `id`          BIGINT UNSIGNED NOT NULL AUTO_INCREMENT COMMENT '主键',
+    `name`        VARCHAR(64)     NOT NULL COMMENT '收藏夹名称',
+    `is_default`  TINYINT(1)      NOT NULL DEFAULT 0 COMMENT '是否默认收藏夹，全局仅一个',
+    `created_at`  DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    PRIMARY KEY (`id`),
+    UNIQUE KEY `uk_collection_name` (`name`)
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci COMMENT ='生词本收藏夹表';
+
+-- 主题与收藏夹关联表：一个单词可同时属于多个收藏夹
+CREATE TABLE IF NOT EXISTS `vocabulary_topic_collection`
+(
+    `topic_id`      BIGINT UNSIGNED NOT NULL COMMENT '主题 id',
+    `collection_id` BIGINT UNSIGNED NOT NULL COMMENT '收藏夹 id',
+    `created_at`    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '收藏时间',
+    PRIMARY KEY (`topic_id`, `collection_id`),
+    KEY `idx_tc_collection` (`collection_id`),
+    CONSTRAINT `fk_tc_topic` FOREIGN KEY (`topic_id`) REFERENCES `vocabulary_topic` (`id`) ON DELETE CASCADE,
+    CONSTRAINT `fk_tc_collection` FOREIGN KEY (`collection_id`) REFERENCES `vocabulary_collection` (`id`) ON DELETE CASCADE
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_general_ci COMMENT ='主题-收藏夹关联表';
+
 -- 主题表：一个「原文 + 语言对」对应一条主题，即生词本里的一行
 CREATE TABLE IF NOT EXISTS `vocabulary_topic`
 (
@@ -42,3 +69,8 @@ CREATE TABLE IF NOT EXISTS `vocabulary_result`
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_general_ci COMMENT ='生词本翻译结果表';
+
+-- 初始化默认收藏夹
+INSERT INTO `vocabulary_collection` (`name`, `is_default`)
+SELECT '默认收藏集', 1
+WHERE NOT EXISTS(SELECT 1 FROM `vocabulary_collection` WHERE `is_default` = 1);
